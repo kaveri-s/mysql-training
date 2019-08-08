@@ -2,52 +2,49 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-// #include "y.tab.h"
+#include "y.tab.h"
 
-// extern YYSTYPE yylval; //temporary. should it be extern?
-// extern int install_id(char *n);
+extern YYSTYPE yylval;
 %}
 
 
-letter [A-Za-z]
-digit  [0-9]
-id {letter}({letter}|{digit})*
-float {digit}+[.]{digit}+
-number {digit}+
+letter  [A-Za-z]
+digit   [0-9]
+name    {letter}+
+float   {digit}+[.]{digit}+
+number  {digit}+
 
 %%
 
-\n[ \t]*	{printf("END_STATEMENT\n");}
+\n	{return(END_STATEMENT);}
 
-<<EOF>>		{
-                yyterminate();
-            }
+<<EOF>>		{yyterminate();}
 
-OPEN        {printf("OPEN ");}
-CLOSE       {printf("CLOSE ");}
-SHOW        {printf("SHOW ");}
-DEPOSIT     {printf("DEPOSIT ");}
-SHUTDOWN    {printf("SHUTDOWN ");}
-ACCOUNT 	{printf("ACCOUNT ");}
-BALANCE 	{printf("BALANCE ");}
-BANK	    {printf("BANK ");}
+OPEN        {return(OPEN);}
+CLOSE       {return(CLOSE);}
+SHOW        {return(SHOW);}
+DEPOSIT     {return(DEPOSIT);}
+SHUTDOWN    {return(SHUTDOWN);}
+ACCOUNT 	{return(ACCOUNT);}
+BALANCE 	{return(BALANCE);}
+BANK	    {return(BANK);}
 
-"MINI STATEMENT" 	    {printf("STATEMENT ");}
-"ALL ACCOUNTS"	        {printf("ACCOUNTS ");}
-"ACTIVE	CONNECTIONS"    {printf("CONNECTIONS ");}
+"MINI STATEMENT" 	    {return(STATEMENT);}
+"ACTIVE CONNECTIONS"    {return(CONNECTIONS);}
+"ALL ACCOUNTS"	        {return(ACCOUNTS);}
 
-{id}        {printf("ID ");}
-{float}     {printf("FLOAT ");}
-{number}    {printf("NUM ");}
+{name}      {yylval.strval = strdup(yytext); return(NAME);}
+{float}     {yylval.floatval = atof(yytext); return(FLOAT);}
+{number}    {yylval.intval = atoi(yytext); return(NUM);}
 
 .   {;}
 
 
 %%
 
-int main()
-{
- yyin=fopen("../test/lex","r");
- yylex();
- return 0;
-}
+// int main()
+// {
+//  yyin=fopen("../test/lex","r);
+//  yylex();
+//  return 0;
+// }
