@@ -46,7 +46,6 @@ statement
 
 %%
 
-<<<<<<< HEAD
 // int main()
 // {
 //     printf("Hi\n");
@@ -55,15 +54,6 @@ statement
 //     printf("Bye\n");
 //     return 0;
 // }
-=======
-void parse()
-{
-    cout << "Hi\n";
-    yyin = fopen("../test/lex", "r");
-    yyparse();
-    cout << "Bye\n";
-}
->>>>>>> 43d06b8a21b7adf1d22008a70f5bc894bc3a7793
 
 
 void yyerror(const char *s)

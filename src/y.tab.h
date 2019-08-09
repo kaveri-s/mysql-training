@@ -87,11 +87,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-<<<<<<< HEAD
-#line 12 "parser.y"
-=======
-#line 15 "parser.y" /* yacc.c:1909  */
->>>>>>> 43d06b8a21b7adf1d22008a70f5bc894bc3a7793
+#line 15 "parser.y"
 
     char* strval;
     float floatval;

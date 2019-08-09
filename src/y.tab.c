@@ -79,11 +79,7 @@ using namespace std;
 int yylex();
 void yyerror(const char *s);
 
-<<<<<<< HEAD
-#line 80 "y.tab.c"
-=======
-#line 79 "y.tab.c" /* yacc.c:339  */
->>>>>>> 43d06b8a21b7adf1d22008a70f5bc894bc3a7793
+#line 83 "y.tab.c"
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus
@@ -160,22 +156,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-<<<<<<< HEAD
-#line 12 "parser.y"
-=======
-#line 15 "parser.y" /* yacc.c:355  */
->>>>>>> 43d06b8a21b7adf1d22008a70f5bc894bc3a7793
+#line 15 "parser.y"
 
     char* strval;
     float floatval;
     int intval;
 
-<<<<<<< HEAD
-#line 163 "y.tab.c"
-=======
-#line 159 "y.tab.c" /* yacc.c:355  */
-};
->>>>>>> 43d06b8a21b7adf1d22008a70f5bc894bc3a7793
+#line 166 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -191,10 +178,6 @@ int yyparse (void);
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */
 
 
-<<<<<<< HEAD
-=======
-#line 176 "y.tab.c" /* yacc.c:358  */
->>>>>>> 43d06b8a21b7adf1d22008a70f5bc894bc3a7793
 
 #ifdef short
 # undef short
@@ -1280,122 +1263,63 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-<<<<<<< HEAD
   case 2:
-#line 31 "parser.y"
-    {printf("open %s\n", (yyvsp[-1].strval));}
-#line 1267 "y.tab.c"
-    break;
-
-  case 3:
-#line 32 "parser.y"
-    {printf("close %d\n", (yyvsp[-1].intval));}
-#line 1273 "y.tab.c"
-    break;
-
-  case 4:
-#line 33 "parser.y"
-    {printf("account balance %d\n", (yyvsp[-1].intval));}
-#line 1279 "y.tab.c"
-    break;
-
-  case 5:
 #line 34 "parser.y"
-    {printf("deposit %d %f\n", (yyvsp[-2].intval), (yyvsp[-1].floatval));}
-#line 1285 "y.tab.c"
-    break;
-
-  case 6:
-#line 35 "parser.y"
-    {printf("mini statement %d\n", (yyvsp[-1].intval));}
-#line 1291 "y.tab.c"
-    break;
-
-  case 7:
-#line 36 "parser.y"
-    {printf("accounts\n");}
-#line 1297 "y.tab.c"
-    break;
-
-  case 8:
-#line 37 "parser.y"
-    {printf("bank balance\n");}
-#line 1303 "y.tab.c"
-    break;
-
-  case 9:
-#line 38 "parser.y"
-    {printf("connections\n");}
-#line 1309 "y.tab.c"
-    break;
-
-  case 10:
-#line 39 "parser.y"
-    {printf("shutdown\n");}
-#line 1315 "y.tab.c"
-    break;
-
-
-#line 1319 "y.tab.c"
-
-=======
-        case 2:
-#line 34 "parser.y" /* yacc.c:1646  */
     {cout << "open " << (yyvsp[-1].strval) << "\n";}
-#line 1264 "y.tab.c" /* yacc.c:1646  */
+#line 1270 "y.tab.c"
     break;
 
   case 3:
-#line 35 "parser.y" /* yacc.c:1646  */
+#line 35 "parser.y"
     {cout << "close" << (yyvsp[-1].intval) << "\n";}
-#line 1270 "y.tab.c" /* yacc.c:1646  */
+#line 1276 "y.tab.c"
     break;
 
   case 4:
-#line 36 "parser.y" /* yacc.c:1646  */
+#line 36 "parser.y"
     {cout << "account balance" << (yyvsp[-1].intval);}
-#line 1276 "y.tab.c" /* yacc.c:1646  */
+#line 1282 "y.tab.c"
     break;
 
   case 5:
-#line 37 "parser.y" /* yacc.c:1646  */
+#line 37 "parser.y"
     {cout << "deposit" << (yyvsp[-2].intval) << " " << (yyvsp[-1].floatval) << "\n";}
-#line 1282 "y.tab.c" /* yacc.c:1646  */
+#line 1288 "y.tab.c"
     break;
 
   case 6:
-#line 38 "parser.y" /* yacc.c:1646  */
+#line 38 "parser.y"
     {cout << "mini statement" << (yyvsp[-1].intval) << "\n";}
-#line 1288 "y.tab.c" /* yacc.c:1646  */
+#line 1294 "y.tab.c"
     break;
 
   case 7:
-#line 39 "parser.y" /* yacc.c:1646  */
+#line 39 "parser.y"
     {cout << "accounts\n";}
-#line 1294 "y.tab.c" /* yacc.c:1646  */
+#line 1300 "y.tab.c"
     break;
 
   case 8:
-#line 40 "parser.y" /* yacc.c:1646  */
+#line 40 "parser.y"
     {cout << "bank balance\n";}
-#line 1300 "y.tab.c" /* yacc.c:1646  */
+#line 1306 "y.tab.c"
     break;
 
   case 9:
-#line 41 "parser.y" /* yacc.c:1646  */
+#line 41 "parser.y"
     {cout << "connections\n";}
-#line 1306 "y.tab.c" /* yacc.c:1646  */
+#line 1312 "y.tab.c"
     break;
 
   case 10:
-#line 42 "parser.y" /* yacc.c:1646  */
+#line 42 "parser.y"
     {cout << "shutdown\n";}
-#line 1312 "y.tab.c" /* yacc.c:1646  */
+#line 1318 "y.tab.c"
     break;
 
 
-#line 1316 "y.tab.c" /* yacc.c:1646  */
->>>>>>> 43d06b8a21b7adf1d22008a70f5bc894bc3a7793
+#line 1322 "y.tab.c"
+
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1626,10 +1550,10 @@ yyreturn:
 #endif
   return yyresult;
 }
+#line 47 "parser.y"
+
+
 <<<<<<< HEAD
-#line 44 "parser.y"
-
-
 // int main()
 // {
 //     printf("Hi\n");
@@ -1639,9 +1563,6 @@ yyreturn:
 //     return 0;
 // }
 =======
-#line 47 "parser.y" /* yacc.c:1906  */
-
-
 void parse()
 {
     cout << "Hi\n";
