@@ -4,6 +4,7 @@
 #include <string>
 #include <cstdlib>
 #include "y.tab.h"
+#include "parser.h"
 
 using namespace std;
 

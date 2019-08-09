@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include "parser.h"
 
 using namespace std;
 
@@ -45,18 +46,17 @@ statement
 
 %%
 
-int main()
+void parse()
 {
     cout << "Hi\n";
     yyin = fopen("../test/lex", "r");
     yyparse();
     cout << "Bye\n";
-    return 0;
 }
 
 
 void yyerror(const char *s)
 {
- printf("%s", s);
+ cout << s;
 //  exit(0);
 }

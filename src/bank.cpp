@@ -1,17 +1,19 @@
-#include<iostream>  
-  
-using namespace std;
+#include "account.h"
 
-struct bank
-{
-    
+class Bank{
+  private:
+    typedef struct Node{
+      Account* account;
+      Node *next;
+    }* node;
+
+    node cur;
+    node temp; 
+    node head;
+
+  public:
+    Bank();
+    void add_account(Account*);
+    void del_node(Account*);
+    void print();
 };
-
-
-int main() 
-{ 
-    // prints hello world 
-    cout<<"Hello World"; 
-      
-    return 0; 
-}
