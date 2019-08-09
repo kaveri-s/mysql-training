@@ -1,0 +1,371 @@
+Grammar
+
+    0 $accept: statement $end
+
+    1 statement: OPEN ACCOUNT NAME statement
+    2          | CLOSE ACCOUNT NUM statement
+    3          | SHOW ACCOUNT BALANCE NUM statement
+    4          | DEPOSIT NUM FLOAT statement
+    5          | SHOW STATEMENT NUM statement
+    6          | SHOW ACCOUNTS statement
+    7          | SHOW BANK BALANCE statement
+    8          | SHOW CONNECTIONS statement
+    9          | SHUTDOWN statement
+   10          | END_STATEMENT statement
+   11          | END_STATEMENT
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    OPEN (258) 1
+    CLOSE (259) 2
+    SHOW (260) 3 5 6 7 8
+    DEPOSIT (261) 4
+    SHUTDOWN (262) 9
+    ACCOUNT (263) 1 2 3
+    BALANCE (264) 3 7
+    BANK (265) 7
+    STATEMENT (266) 5
+    ACCOUNTS (267) 6
+    CONNECTIONS (268) 8
+    NAME <strval> (269) 1
+    FLOAT <floatval> (270) 4
+    NUM <intval> (271) 2 3 4 5
+    END_STATEMENT (272) 10 11
+
+
+Nonterminals, with rules where they appear
+
+    $accept (18)
+        on left: 0
+    statement (19)
+        on left: 1 2 3 4 5 6 7 8 9 10 11
+        on right: 0 1 2 3 4 5 6 7 8 9 10
+
+
+State 0
+
+    0 $accept: . statement $end
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 7
+
+
+State 1
+
+    1 statement: OPEN . ACCOUNT NAME statement
+
+    ACCOUNT  shift, and go to state 8
+
+
+State 2
+
+    2 statement: CLOSE . ACCOUNT NUM statement
+
+    ACCOUNT  shift, and go to state 9
+
+
+State 3
+
+    3 statement: SHOW . ACCOUNT BALANCE NUM statement
+    5          | SHOW . STATEMENT NUM statement
+    6          | SHOW . ACCOUNTS statement
+    7          | SHOW . BANK BALANCE statement
+    8          | SHOW . CONNECTIONS statement
+
+    ACCOUNT      shift, and go to state 10
+    BANK         shift, and go to state 11
+    STATEMENT    shift, and go to state 12
+    ACCOUNTS     shift, and go to state 13
+    CONNECTIONS  shift, and go to state 14
+
+
+State 4
+
+    4 statement: DEPOSIT . NUM FLOAT statement
+
+    NUM  shift, and go to state 15
+
+
+State 5
+
+    9 statement: SHUTDOWN . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 16
+
+
+State 6
+
+   10 statement: END_STATEMENT . statement
+   11          | END_STATEMENT .
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    $default  reduce using rule 11 (statement)
+
+    statement  go to state 17
+
+
+State 7
+
+    0 $accept: statement . $end
+
+    $end  shift, and go to state 18
+
+
+State 8
+
+    1 statement: OPEN ACCOUNT . NAME statement
+
+    NAME  shift, and go to state 19
+
+
+State 9
+
+    2 statement: CLOSE ACCOUNT . NUM statement
+
+    NUM  shift, and go to state 20
+
+
+State 10
+
+    3 statement: SHOW ACCOUNT . BALANCE NUM statement
+
+    BALANCE  shift, and go to state 21
+
+
+State 11
+
+    7 statement: SHOW BANK . BALANCE statement
+
+    BALANCE  shift, and go to state 22
+
+
+State 12
+
+    5 statement: SHOW STATEMENT . NUM statement
+
+    NUM  shift, and go to state 23
+
+
+State 13
+
+    6 statement: SHOW ACCOUNTS . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 24
+
+
+State 14
+
+    8 statement: SHOW CONNECTIONS . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 25
+
+
+State 15
+
+    4 statement: DEPOSIT NUM . FLOAT statement
+
+    FLOAT  shift, and go to state 26
+
+
+State 16
+
+    9 statement: SHUTDOWN statement .
+
+    $default  reduce using rule 9 (statement)
+
+
+State 17
+
+   10 statement: END_STATEMENT statement .
+
+    $default  reduce using rule 10 (statement)
+
+
+State 18
+
+    0 $accept: statement $end .
+
+    $default  accept
+
+
+State 19
+
+    1 statement: OPEN ACCOUNT NAME . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 27
+
+
+State 20
+
+    2 statement: CLOSE ACCOUNT NUM . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 28
+
+
+State 21
+
+    3 statement: SHOW ACCOUNT BALANCE . NUM statement
+
+    NUM  shift, and go to state 29
+
+
+State 22
+
+    7 statement: SHOW BANK BALANCE . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 30
+
+
+State 23
+
+    5 statement: SHOW STATEMENT NUM . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 31
+
+
+State 24
+
+    6 statement: SHOW ACCOUNTS statement .
+
+    $default  reduce using rule 6 (statement)
+
+
+State 25
+
+    8 statement: SHOW CONNECTIONS statement .
+
+    $default  reduce using rule 8 (statement)
+
+
+State 26
+
+    4 statement: DEPOSIT NUM FLOAT . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 32
+
+
+State 27
+
+    1 statement: OPEN ACCOUNT NAME statement .
+
+    $default  reduce using rule 1 (statement)
+
+
+State 28
+
+    2 statement: CLOSE ACCOUNT NUM statement .
+
+    $default  reduce using rule 2 (statement)
+
+
+State 29
+
+    3 statement: SHOW ACCOUNT BALANCE NUM . statement
+
+    OPEN           shift, and go to state 1
+    CLOSE          shift, and go to state 2
+    SHOW           shift, and go to state 3
+    DEPOSIT        shift, and go to state 4
+    SHUTDOWN       shift, and go to state 5
+    END_STATEMENT  shift, and go to state 6
+
+    statement  go to state 33
+
+
+State 30
+
+    7 statement: SHOW BANK BALANCE statement .
+
+    $default  reduce using rule 7 (statement)
+
+
+State 31
+
+    5 statement: SHOW STATEMENT NUM statement .
+
+    $default  reduce using rule 5 (statement)
+
+
+State 32
+
+    4 statement: DEPOSIT NUM FLOAT statement .
+
+    $default  reduce using rule 4 (statement)
+
+
+State 33
+
+    3 statement: SHOW ACCOUNT BALANCE NUM statement .
+
+    $default  reduce using rule 3 (statement)

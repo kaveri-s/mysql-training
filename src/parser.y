@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern FILE* yyin;
+// extern FILE* yyin;
 int yylex();
 void yyerror(const char *s);
 %}
@@ -43,14 +43,14 @@ statement
 
 %%
 
-int main()
-{
-    printf("Hi\n");
-    yyin = fopen("../test/lex", "r");
-    yyparse();
-    printf("Bye\n");
-    return 0;
-}
+// int main()
+// {
+//     printf("Hi\n");
+//     yyin = fopen("../test/lex", "r");
+//     yyparse();
+//     printf("Bye\n");
+//     return 0;
+// }
 
 
 void yyerror(const char *s)
