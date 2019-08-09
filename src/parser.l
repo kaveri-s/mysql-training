@@ -1,8 +1,12 @@
 %{
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
 #include "y.tab.h"
+#include "parser.h"
+
+using namespace std;
 
 extern YYSTYPE yylval;
 %}

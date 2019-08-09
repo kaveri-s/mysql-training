@@ -1,7 +1,10 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include "parser.h"
+
+using namespace std;
 
 // extern FILE* yyin;
 int yylex();
@@ -28,21 +31,22 @@ void yyerror(const char *s);
 %%
 
 statement
-    : OPEN ACCOUNT NAME statement           {printf("open %s\n", $3);}
-    | CLOSE ACCOUNT NUM statement          {printf("close %d\n", $3);}
-    | SHOW ACCOUNT BALANCE NUM statement   {printf("account balance %d\n", $4);}
-    | DEPOSIT NUM FLOAT statement           {printf("deposit %d %f\n", $2, $3);}
-    | SHOW STATEMENT NUM statement          {printf("mini statement %d\n", $3);}
-    | SHOW ACCOUNTS statement              {printf("accounts\n");}
-    | SHOW BANK BALANCE statement           {printf("bank balance\n");}
-    | SHOW CONNECTIONS statement            {printf("connections\n");}
-    | SHUTDOWN statement                    {printf("shutdown\n");}
+    : OPEN ACCOUNT NAME statement           {cout << "open " << $3 << "\n";}
+    | CLOSE ACCOUNT NUM statement          {cout << "close" << $3 << "\n";}
+    | SHOW ACCOUNT BALANCE NUM statement   {cout << "account balance" << $4;}
+    | DEPOSIT NUM FLOAT statement           {cout << "deposit" << $2 << " " << $3 << "\n";}
+    | SHOW STATEMENT NUM statement          {cout << "mini statement" << $3 << "\n";}
+    | SHOW ACCOUNTS statement              {cout << "accounts\n";}
+    | SHOW BANK BALANCE statement           {cout << "bank balance\n";}
+    | SHOW CONNECTIONS statement            {cout << "connections\n";}
+    | SHUTDOWN statement                    {cout << "shutdown\n";}
     | END_STATEMENT statement
     | END_STATEMENT
     ;
 
 %%
 
+<<<<<<< HEAD
 // int main()
 // {
 //     printf("Hi\n");
@@ -51,10 +55,19 @@ statement
 //     printf("Bye\n");
 //     return 0;
 // }
+=======
+void parse()
+{
+    cout << "Hi\n";
+    yyin = fopen("../test/lex", "r");
+    yyparse();
+    cout << "Bye\n";
+}
+>>>>>>> 43d06b8a21b7adf1d22008a70f5bc894bc3a7793
 
 
 void yyerror(const char *s)
 {
- printf("%s", s);
+ cout << s;
 //  exit(0);
 }
