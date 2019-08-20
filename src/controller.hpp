@@ -12,7 +12,8 @@ extern FILE* yyin;
 // void yyerror(const char *s);
 
 //For Bank Transactions
-// struct Txn {
-//     enum type {Credit, Debit};
-//     float amount;
-// };
+struct Txn {
+    enum type {Credit, Debit};
+    float amount;
+};
+

@@ -32,11 +32,11 @@ void yyerror(const char *s);
 
 statement
     : OPEN ACCOUNT NAME statement           {cout << "open " << $3 << "\n";}
-    | CLOSE ACCOUNT NUM statement          {cout << "close" << $3 << "\n";}
-    | SHOW ACCOUNT BALANCE NUM statement   {cout << "account balance" << $4;}
+    | CLOSE ACCOUNT NUM statement           {cout << "close" << $3 << "\n";}
+    | SHOW ACCOUNT BALANCE NUM statement    {cout << "account balance" << $4;}
     | DEPOSIT NUM FLOAT statement           {cout << "deposit" << $2 << " " << $3 << "\n";}
     | SHOW STATEMENT NUM statement          {cout << "mini statement" << $3 << "\n";}
-    | SHOW ACCOUNTS statement              {cout << "accounts\n";}
+    | SHOW ACCOUNTS statement               {cout << "accounts\n";}
     | SHOW BANK BALANCE statement           {cout << "bank balance\n";}
     | SHOW CONNECTIONS statement            {cout << "connections\n";}
     | SHUTDOWN statement                    {cout << "shutdown\n";}
