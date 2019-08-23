@@ -61,8 +61,6 @@ char *read_command(int sock)
         }
     }
 
-    rl_free_keymap();
-
     return buff;
 }
 
@@ -137,8 +135,6 @@ int main()
     }
 
     close(sock);
-    // clear_history();
-    // rl_free_undo_list();
-    // rl_clear_history();
+
     return 0;
 }
