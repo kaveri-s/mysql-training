@@ -1,122 +1,144 @@
 #include "client.h"
 #include "myerror.h"
+#include <iostream>
 
 using namespace std;
 
-enum entry
+//Prints different prompts
+void prompt(enum Entry ent)
 {
-    START,
-    COMMAND,
-    HELP
-}
-
-void prompt(enum entry)
-{
-    switch (entry)
+    switch (ent)
     {
-    case 'START':
-        cout << "Welcome to our Lorem bank. Type HELP to view list of commands. Happy banking!!";
+    case START:
+        cout << "Welcome to Lorem bank. Type HELP to view list of commands. Happy banking!!";
         break;
-    case 'COMMAND':
-        cout << "Lorem:$ ";
+    case COMMAND:
+        cout << "Lorem >> ";
         break;
-    case 'HELP':
-        cout << "List of commands"
+    case HELP:
+        cout << "List of commands";
+        break;
     }
+
 }
 
-int init_buff(Buffer *buff)
+//Initiates connection
+int init_conn(int *sock, struct sockaddr_in addr)
 {
-    buff = (Buffer *)malloc(sizeof(Buffer));
-    if (buff == NULL)
-        return 1;
 
-    buff->data = (char *)malloc(BUFF_SIZE);
-    if (buff->data == NULL)
+    if ((*sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        printf("\n Socket creation error \n");
         return 1;
+    }
 
-    buff->length = 0;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    addr.sin_port = htons(PORT);
+
+    if (connect(*sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+    {
+        printf("\nConnection Failed \n");
+        return 1;
+    }
 
     return 0;
 }
 
-//Send user command to server
-int send_command(int sock, Buffer *buff, int err)
-{
-    if (read_command(sock, buff))
-        err = READ_ERR;
-
-    if (send(sock, buff->data, buff->length, 0) == -1)
-        err = SEND_ERR;
-}
-
 //Read command typed by user
-int read_command(int sock, Buffer *buff)
+char *read_command(int sock)
 {
-    int len;
-    while ((len = read(fd, buff->data, BUFF_SIZE - 1)) > 0)
+    char *buff;
+    prompt(COMMAND);
+    fflush(stdout);
+    if ((buff = readline(NULL)) != NULL)
     {
-        buff->data[ret] = '\0';
-        buff->length = len;
-        if (len == BUFF_SIZE - 1)
-            buff->more = 1;
-        return 
+        if (strlen(buff) > 0)
+            add_history(buff);
+        else
+        {
+            return NULL;
+        }
     }
+
+    rl_free_keymap();
+
+    return buff;
 }
 
-int main(int argc, char const *argv[])
+//Send user command to server
+int send_command(int sock)
 {
-    int sock, err;
+    char *buff;
+
+    if ((buff = read_command(sock)) == NULL)
+    {
+        printf("\nRead Error\n");
+        return 1;
+    }
+
+    cout << buff;
+    fflush(stdout);
+
+    if (send(sock, buff, strlen(buff), 0) == -1)
+    {
+        printf("\nSend Error\n");
+        cout << strerror(errno);
+        return 1;
+    }
+
+    free(buff);
+    return 0;
+}
+
+int receive_result(int sock)
+{
+    char buffer[1024];
+    int len = 0;
+
+    if ((len = recv(sock, buffer, 1024, 0)) < 0)
+    {
+        printf("Receive failed\n");
+    }
+
+    buffer[len] = 0;
+    //Print the received message
+    printf("Data received: %s\n", buffer);
+}
+
+//Controller function
+int main()
+{
+    int sock;
     struct sockaddr_in addr;
-    Buffer *buff;
 
     quit = false;
 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    //Call by reference needed as sock is being assigned here
+    if (init_conn(&sock, addr))
     {
-        printf("\n Socket creation error \n");
         return -1;
     }
 
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        printf("\nConnection Failed \n");
-        return -1;
-    }
-
-    if (init_buff(buff))
-    {
-        printf("\nBuffer Allocation Error\n");
-        return -1;
-    }
-
+    //sock is not modified anymore
     while (!quit)
     {
-        if (send_command(sock, buff, err))
+        if (send_command(sock))
         {
-            switch (err)
-            {
-            case READ_ERR:
-                printf("Unable to read from command line");
-            }
             return -1;
         }
 
-        if (receive_result(sock, buff, err))
+        if (receive_result(sock))
         {
-            switch (err)
-            {
-            }
             return -1;
         }
+
+        quit = true;
     }
 
-    send(sock, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
-    valread = read(sock, buffer, 1024);
-    printf("%s\n", buffer);
+    close(sock);
+    // clear_history();
+    // rl_free_undo_list();
+    // rl_clear_history();
     return 0;
 }

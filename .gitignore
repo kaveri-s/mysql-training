@@ -1,0 +1,6 @@
+src/*.gch
+src/server
+src/client
+src/*.out
+src/lex.yy.c
+src/y.tab.h

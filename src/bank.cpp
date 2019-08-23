@@ -49,7 +49,7 @@ Bank::~Bank(){
 }
 
 int Bank::openAccount(char *name){
-    Account* acc = new Account();
+    Account* acc = (Account *)malloc(sizeof(Account));
     acc->name = strdup(name);
     acc->acc_no = newAccountID();
     acc->balance = 0.00;

@@ -1,5 +1,7 @@
 #include <pthread.h>
-#include "connection.hpp"
+#include "connection.h"
+
+#define MINTHREADS 10
 
 
 class Thread {
@@ -9,7 +11,7 @@ private:
     pthread_mutex_t thd_info;
     enum stmt_state {TODO, PARSED, EXECUTED};
     // bool ro;
-    ConnInfo *conn;
+    Connection *conn;
 
 public:
 
@@ -35,17 +37,30 @@ class ThreadManager {
 
 private:
 
-    int num_threads;
-    Thread *head;
+    int t_count;
+    int *t_pool;
+    int t_id;
 
     static ThreadManager *t_manager;
 
     pthread_mutex_t thd_id_gen;
     pthread_mutex_t thd_counter;
-    pthread_mutex_t thd_list;
+    pthread_mutex_t thd_pool;
+
+    //Called only once so no locking required
+    ThreadManager() {
+        this.t_id = 1;
+        this.t_pool = (int *)malloc(MINTHREADS*sizeof(int));    //Increase as more clients join
+        this.t_count = 0;
+    }
+
+    ThreadManager(const ThreadManager &);
+    ThreadManager &operator=(const ThreadnManager &);
 
 public:
     static ThreadManager *get_instance() {
+        if(t_manager == NULL)
+            t_manager = new ThreadManager();
         return t_manager;
     }
 
@@ -55,14 +70,16 @@ public:
     void destroy_manager();
 
     //Thread ID Generator
-    void get_thd_id();
+    void get_t_id();
 
     //Updating Array of Threads
     void add_thd(THD *thd);
     void remove_thd(THD *thd);
 
     //Thread Count Actions
-    void dec_thd_count();
-    void inc_thd_count();
-    int get_thd_count();
-}
+    void dec_t_count();
+    void inc_t_count();
+    int get_t_count();
+};
+
+ThreadManager *ThreadManager::t_manager = NULL;

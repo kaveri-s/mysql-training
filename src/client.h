@@ -2,13 +2,19 @@
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
 #include <unistd.h> 
-#include <string.h> 
+#include <string.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <error.h>
 #define PORT 8080
-#define BUFF_SIZE 8192
+#define BUFF_SIZE 256
 
 bool quit;
 
-struct Buffer {
-    char *data;
-    int length;
+enum Entry
+{
+    START,
+    COMMAND,
+    HELP
 };
+
