@@ -1,95 +1,34 @@
 #include "connection.h"
 
-int init_conn(ConnectionManager *ConnMgr)
-{
-    // Creating socket file descriptor
-    if ((ConnMgr->sock = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-    {
-        printf("Socket Creation failed");
-        return 1;
-    }
-
-    printf("Socket created");
-    fflush(stdout);
-
-    ConnMgr->addr->sin_family = AF_INET;
-    ConnMgr->addr->sin_addr.s_addr = INADDR_ANY;
-    ConnMgr->addr->sin_port = htons(PORT);
-
-    // Forcefully attaching socket to the port 8080
-    if (bind(ConnMgr->sock, (struct sockaddr *)ConnMgr->addr, sizeof(sockaddr_in)) < 0)
-    {
-        perror("Socket bind failed");
-        return 1;
-    }
-
-        printf("Bound");
-    fflush(stdout);
-
-    if (listen(ConnMgr->sock, 3) < 0)
-    {
-        perror("Socket failed to listen");
-        return 1;
-    }
-
-    printf("Listening....");
-
-    return 0;
-}
-
-Connection *getIncomingConnection(ConnectionManager *ConnMgr) {
-
-
-    printf("So far so good");
-    fflush(stdout);
-
-    Connection *conn = new Connection();
-
-    socklen_t len = sizeof(struct sockaddr_storage);
-
-
-    if ((conn->sock = accept(ConnMgr->sock, (struct sockaddr *)conn->addr, (socklen_t *)&len)) < 0)
-    {
-        printf("Connection accept error");
-        conn = NULL;
-    }
-
-    return conn;
-}
-
+//Entry point for Server program
 int main(int argc, char const *argv[])
 {
 
     ConnectionManager *ConnMgr = ConnectionManager::getInstance();
+    // struct sockaddr_storage client_addr;
 
-    printf("Connection Manager created");
-    fflush(stdout);
-
-    if (init_conn(ConnMgr))
-    {
-        return -1;
-    }
+    //Generate server socket, bind to ip and port, listen for new connections
+    if (ConnMgr->initConn())
+        return EXIT_FAILURE;
 
     while (1)
     {
-        //Wait for new client
-        Connection *conn = getIncomingConnection(ConnMgr);
+        //Accept incoming connection
+        conn c_sock = ConnMgr->getNewConnection();
 
-        if(conn == NULL)
-            return 1;
+        if(c_sock == 0)
+            return EXIT_FAILURE;
 
-        printf("Conn accepted");
-        fflush(stdout);
+        std::cout << "Serving on: " << c_sock << std::endl;
 
         //Serve new client on new socket
-        if(ConnMgr->serveClient(conn)) {
-            return 1;
+        if(ConnMgr->serveClient(c_sock)) {
+            return EXIT_FAILURE;
         }
 
-        delete conn;
-        // break;
+        psuccess("Done");
+        break;
     };
 
-    printf("Server Connection aborted");
-    // ConnectionManager::~ConnectionManager();
+    return 0;
 }

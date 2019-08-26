@@ -1,57 +1,60 @@
 #include <pthread.h>
 #include "connection.h"
 
-#define MINTHREADS 10
 
 
 class Thread {
-private:
+protected:
     int thd_id;
-    pthread_mutex_t thd_data;
+    enum t_states{BUSY, PARSING, EXECUTING, IDLE}thd_state;
     pthread_mutex_t thd_info;
-    enum stmt_state {TODO, PARSED, EXECUTED};
     // bool ro;
     Connection *conn;
 
 public:
 
-    Thread *get_thread() {return this;}
+    Thread() {
+        thd_id = 0;
+        thd_state = IDLE;
+        conn = NULL;
+    }
+
     bool kill_thread();
 
     int parse(char *stmt, struct args);
     int execute(struct args);
     
-    int set_state(enum stmt_state);
+    int set_thd_state(enum t_states);
+    enum t_states get_thd_state();
     
     int set_conn_info();
 
-    int set_thread_id(int thd_id) {this.thd_id};
-    int get_thread_id() {return this.thd_id};
+    int set_thd_id(int thd_id) {this.thd_id};
+    int get_thd_id() {return this.thd_id};
 
     //Add Constructor and Destructor
 }
 
 
 //Thread Manager - only one can exist as long as the server is running
+//Do all operations on Thread using Thread Manager ONLY
 class ThreadManager {
 
 private:
 
-    int t_count;
-    int *t_pool;
-    int t_id;
+    int t_count;    //No of Active threadss
+    std::map<int, char> t_pool;
 
     static ThreadManager *t_manager;
 
-    pthread_mutex_t thd_id_gen;
     pthread_mutex_t thd_counter;
     pthread_mutex_t thd_pool;
 
     //Called only once so no locking required
     ThreadManager() {
-        this.t_id = 1;
-        this.t_pool = (int *)malloc(MINTHREADS*sizeof(int));    //Increase as more clients join
-        this.t_count = 0;
+        t_count = 0;
+        thd_counter = PTHREAD_MUTEX_INITIALIZER;
+        thd_pool = PTHREAD_MUTEX_INITIALIZER;
     }
 
     ThreadManager(const ThreadManager &);
@@ -66,15 +69,15 @@ public:
 
 
     //Thread Manager instance handler
-    bool create_manager();
     void destroy_manager();
 
     //Thread ID Generator
-    void get_t_id();
+    void gen_t_id();
 
-    //Updating Array of Threads
-    void add_thd(THD *thd);
-    void remove_thd(THD *thd);
+    //Updating Thread Pool
+    int assign_thd(Connection *);
+    Thd *get_thd(int t_id);
+    void stop_thd(Thread *thd);
 
     //Thread Count Actions
     void dec_t_count();

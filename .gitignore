@@ -4,3 +4,4 @@ src/client
 src/*.out
 src/lex.yy.c
 src/y.tab.h
+.vscode/settings.json

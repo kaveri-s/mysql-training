@@ -1,6 +1,4 @@
 #include "client.h"
-#include "myerror.h"
-#include <iostream>
 
 using namespace std;
 
@@ -10,13 +8,13 @@ void prompt(enum Entry ent)
     switch (ent)
     {
     case START:
-        cout << "Welcome to Lorem bank. Type HELP to view list of commands. Happy banking!!";
+        cout << "Welcome to Lorem bank. Type HELP to view list of commands. Happy banking!!" << endl;
         break;
     case COMMAND:
-        cout << "Lorem >> ";
+        cout << "Lorem >> " << endl;
         break;
     case HELP:
-        cout << "List of commands";
+        cout << "List of commands" << endl;
         break;
     }
 
@@ -28,7 +26,7 @@ int init_conn(int *sock, struct sockaddr_in addr)
 
     if ((*sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        printf("\n Socket creation error \n");
+        perr();
         return 1;
     }
 
@@ -38,7 +36,7 @@ int init_conn(int *sock, struct sockaddr_in addr)
 
     if (connect(*sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
-        printf("\nConnection Failed \n");
+        perr();
         return 1;
     }
 
@@ -71,7 +69,7 @@ int send_command(int sock)
 
     if ((buff = read_command(sock)) == NULL)
     {
-        printf("\nRead Error\n");
+        perr();
         return 1;
     }
 
@@ -80,8 +78,7 @@ int send_command(int sock)
 
     if (send(sock, buff, strlen(buff), 0) == -1)
     {
-        printf("\nSend Error\n");
-        cout << strerror(errno);
+        perr();
         return 1;
     }
 
@@ -96,7 +93,7 @@ int receive_result(int sock)
 
     if ((len = recv(sock, buffer, 1024, 0)) < 0)
     {
-        printf("Receive failed\n");
+        perr();
     }
 
     buffer[len] = 0;
