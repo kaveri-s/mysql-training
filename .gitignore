@@ -1,7 +1,5 @@
-src/*.gch
-src/server
-src/client
-src/*.out
-src/lex.yy.c
-src/y.tab.h
+
 .vscode/settings.json
+src/client/test.txt
+.vscode/settings.json
+src/client/client.h.gch
