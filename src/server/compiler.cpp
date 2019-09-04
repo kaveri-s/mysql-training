@@ -36,8 +36,8 @@ struct parseCommand *Compiler::getParams(const char *buffer)
 int Compiler::parse()
 {
     char buff[this->buffer.size() + 1];
-    strcpy(buff, this->buffer.c_str());
-    
+    strncpy(buff, this->buffer.c_str(), this->buffer.size());
+    buff[this->buffer.size()]='\0';
     this->command = this->getParams((const char *)buff);
     
     if (this->command == NULL)

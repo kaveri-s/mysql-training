@@ -29,9 +29,8 @@ private:
 
 public:
     Account(int acc_no, char *name)
-        :acc_no(acc_no), balance(0.0), front(-1), txn_count(0)
+        :acc_no(acc_no), balance(0.0), front(-1), txn_count(0), name(name)
     {
-        this->name = std::string(name);
         free(name);
         pthread_rwlock_init(&a_info, NULL);
     }

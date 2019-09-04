@@ -58,6 +58,7 @@ int ConnectionManager::addToActive(conn c_sock, in_addr ip)
     pthread_mutex_lock(&map_info);
     ActiveConn.insert(std::pair<conn, in_addr>(c_sock, ip));
     pthread_mutex_unlock(&map_info);
+    return 0;
 }
 
 //Serve new client on new socket
@@ -99,6 +100,7 @@ int ConnectionManager::removeFromActive(conn c_sock)
     pthread_mutex_lock(&map_info);
     ActiveConn.erase(c_sock);
     pthread_mutex_unlock(&map_info);
+    return 0;
 }
 
 //Get Active Connections

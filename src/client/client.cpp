@@ -71,7 +71,7 @@ int receive_result(int sock)
     {
         buffer[len] = '\0';
 
-        if(buffer && buffer[0] != 'Q')
+        if(buffer[0] != 'Q')
             cout << buffer;
 
         if (len < BUFF_SIZE - 1)

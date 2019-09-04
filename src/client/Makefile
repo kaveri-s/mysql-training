@@ -2,7 +2,7 @@
 
 PROG = client
 OBJS = client.o
-CC	= g++
+CC	= clang++
 CFLAGS	= -g
 LFLAGS = -lreadline
 

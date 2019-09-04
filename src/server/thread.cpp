@@ -171,4 +171,6 @@ void *Thread::start_thd()
     }
 
     this->set_t_state(DONE);
+
+    pthread_exit(NULL);
 }

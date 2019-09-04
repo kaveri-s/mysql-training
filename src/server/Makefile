@@ -2,9 +2,9 @@
 
 PROG = server
 OBJS = account.o bank.o lexer.o parser.o compiler.o thread.o connection.o server.o
-CC	= g++
+CC	= clang++
 CFLAGS	= -g
-LFLAGS = -lpthread
+LFLAGS = -pthread
 
 $(PROG):$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(PROG) $(LFLAGS)
