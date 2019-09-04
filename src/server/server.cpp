@@ -11,9 +11,9 @@ void signal_handler( int signal_num ){
 //Entry point for Server program
 int main(int argc, char const *argv[])
 {
-    std::signal(SIGINT, signal_handler);
-    std::signal(SIGSEGV, signal_handler);
-    std::signal(SIGTERM, signal_handler);
+    signal(SIGINT, signal_handler);
+    signal(SIGSEGV, signal_handler);
+    signal(SIGTERM, signal_handler);
 
     ConnectionManager *ConnMgr = ConnectionManager::getInstance();
 

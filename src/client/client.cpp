@@ -54,8 +54,6 @@ int send_command(int sock, char * buff)
         return 1;
     }
 
-    // std::cout << "Sent: " << buff << std::endl; 
-
     free(buff);
     buff = NULL;
 
@@ -71,7 +69,10 @@ int receive_result(int sock)
     while ((len = recv(sock, buffer, BUFF_SIZE - 1, 0)) > 0)
     {
         buffer[len] = '\0';
-        cout << buffer;
+
+        if(buffer && buffer[0] != 'Q')
+            cout << buffer;
+
         if (len < BUFF_SIZE - 1)
         {
             if(len == 0 || buffer[0] == 'Q') {
@@ -109,7 +110,9 @@ int main()
     while (!quit)
     {
         if ((buff = read_command()) == NULL) {
-            break;
+            free(buff);
+            close(sock);
+            return -1;
         }
 
         if(buff[0] == '\n') continue;
@@ -127,8 +130,6 @@ int main()
             return -1;
         }
     }
-
-    free(buff);
     fclose(fp);
     close(sock);
 
