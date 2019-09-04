@@ -28,7 +28,7 @@ std::string Account::deposit(float amt)
     pthread_rwlock_wrlock(&this->a_info);
     this->balance = this->balance + amt;
     this->insertTxn(amt);
-    os << "New Balance" << this->balance << std::endl;
+    os << "New Balance: "<< std::fixed << std::setprecision(2) << this->balance << std::endl;
     pthread_rwlock_unlock(&this->a_info);
 
     return os.str();
@@ -50,7 +50,7 @@ std::string Account::withdraw(float amt)
 
     this->balance = balance;
     this->insertTxn(-amt);
-    os << "New Balance: " << this->balance << std::endl;
+    os << "New Balance: " << std::fixed << std::setprecision(2) << this->balance << std::endl;
     pthread_rwlock_unlock(&this->a_info);
 
     return os.str();
@@ -73,7 +73,6 @@ std::string Account::showMiniStmt()
         {
             os << "Credit\t" << amt << "\n";
         }
-        os << std::endl;
     }
     pthread_rwlock_unlock(&a_info);
 

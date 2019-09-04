@@ -115,7 +115,6 @@ std::string ConnectionManager::printActive()
     {
         os << inet_ntoa(itr->second) << '\n';
     }
-    os << std::endl;
     pthread_mutex_unlock(&map_info);
 
     return os.str();

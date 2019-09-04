@@ -28,14 +28,21 @@ int Thread::exec_cmd()
     Account *acc = NULL;
 
     struct parseCommand *command = this->compiler->getCommand();
-    std::ostringstream os; //To handle account balance
+
+    //Temporary variables used in some 'cases'
+    std::ostringstream os;
+    int acc_no = 0;
+    float bal = -1;
 
     switch (command->cmd_type)
     {
 
     case ACCOP:
-        if (bank->openAccount(command->name))
-            this->result = "Account Opened\n";
+        if ((acc_no = bank->openAccount(command->name)))
+        {
+            os << "Account Opened " << acc_no << std::endl;
+            this->result = os.str();
+        }
         else
             this->result = "Account Open Error\n";
         break;
@@ -43,7 +50,7 @@ int Thread::exec_cmd()
     case ACCCL:
         if ((acc = bank->getAccount(command->acc_no)) == NULL)
         {
-            this->result = "Account Not Found";
+            this->result = "Account Not Found\n";
             break;
         }
         if (bank->closeAccount(command->acc_no))
@@ -58,8 +65,14 @@ int Thread::exec_cmd()
             this->result = "Account Not Found\n";
             break;
         }
-        os << std::fixed << std::setprecision(2) << acc->showAccountBalance() << std::endl;
-        this->result = os.str();
+        if((bal = acc->showAccountBalance()))
+        {
+            os << std::fixed << std::setprecision(2) << bal << std::endl;
+            this->result = os.str();
+        }
+        else {
+            this->result = "Account Balance Error\n";
+        }
         break;
 
     case CR:
@@ -77,8 +90,7 @@ int Thread::exec_cmd()
             this->result = "Account Not Found\n";
             break;
         }
-        os << acc->withdraw(command->amt) << std::endl;
-        this->result = os.str();
+        this->result = acc->withdraw(command->amt);
         break;
 
     case MINI:
@@ -112,12 +124,12 @@ int Thread::exec_cmd()
             this->result = "Q";
         }
         else
-            this->result = "Oops, unable to shut server";
+            this->result = "Oops, unable to shut server\n";
         pthread_mutex_unlock(&CM->map_info);
         break;
 
     case NONE:
-        this->result = "Error parsing command";
+        this->result = "Error parsing command\n";
         break;
 
     default:
