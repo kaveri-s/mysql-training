@@ -3,3 +3,8 @@
 src/client/test.txt
 .vscode/settings.json
 src/client/client.h.gch
+src/*/*.o
+src/server/parser.[ch]
+src/server/lexer.[ch]
+src/server/server
+src/client/client

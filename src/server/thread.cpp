@@ -92,9 +92,9 @@ int Thread::exec_cmd() {
             this->set_t_state(DONE);
             this->shutdown = true;
             CM->shutdown = true;
-            this->result = "0";
+            this->result = "Q";
         }
-        else this->result = "1";
+        else this->result = "Oops, unable to shut server";
         pthread_mutex_unlock(&CM->map_info);
         break;
     case NONE:

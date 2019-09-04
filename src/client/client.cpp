@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 //Initiates connection
 int init_conn(int *sock, struct sockaddr_in addr)
 {
@@ -63,6 +62,7 @@ int send_command(int sock, char * buff)
     return 0;
 }
 
+//Receives result from server in BUFF_SIZEd packets
 int receive_result(int sock)
 {
     char buffer[BUFF_SIZE];
@@ -72,17 +72,18 @@ int receive_result(int sock)
     {
         buffer[len] = '\0';
         cout << buffer;
-        if (len == 0 || len < BUFF_SIZE - 1)
+        if (len < BUFF_SIZE - 1)
         {
-            cout << endl;
+            if(len == 0 || buffer[0] == 'Q') {
+                std::cout << "Server disconnected. Shutting down client..." << endl;
+                quit = true;
+            }
+            else 
+                cout << endl;
             return 0;
         }
     }
-    if(len == 0) {
-        std::cout << "Server disconnected. Shutting down client..." << endl;
-        quit = true;
-        return 0;
-    }
+    
     
     return 1;
 }

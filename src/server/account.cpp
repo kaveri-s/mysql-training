@@ -54,7 +54,7 @@ std::string Account::showMiniStmt() {
         index = (index < 0)?-index:index;       //No point including math just for abs
         float amt = 0.0;
         if((amt = this->Txns[index]) < 0.0)
-            os << "Debit\t" << amt << "\n";
+            os << "Debit\t" << -amt << "\n";
         else
         {
             os << "Credit\t" << amt << "\n";
