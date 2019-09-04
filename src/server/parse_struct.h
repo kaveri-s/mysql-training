@@ -6,13 +6,27 @@
 #include <errno.h>
 #include <error.h>
 
-enum cmd_types {ACCOP, ACCCL, ACCBAL, CR, DB, MINI, ALLACC, BBAL, ACTIVE, SHUT, NONE};
+enum cmd_types
+{
+    ACCOP,
+    ACCCL,
+    ACCBAL,
+    CR,
+    DB,
+    MINI,
+    ALLACC,
+    BBAL,
+    ACTIVE,
+    SHUT,
+    NONE
+};
 
-struct parseCommand {
+struct parseCommand
+{
     int acc_no;
     float amt;
     char *name;
     enum cmd_types cmd_type;
-}; 
+};
 
 #endif

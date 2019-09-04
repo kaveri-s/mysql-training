@@ -28,9 +28,8 @@ int init_conn(int *sock, struct sockaddr_in addr)
 //Read command typed by user
 char *read_command()
 {
-
     char * buff;
-    fflush(stdout);
+
     if ((buff = readline("Lorem >>")) != NULL)
     {
         if (strlen(buff) > 0)
@@ -38,6 +37,7 @@ char *read_command()
         else
             buff[0]='\n';
     }
+
     return buff;
 }
 
@@ -54,6 +54,7 @@ int send_command(int sock, char * buff)
         return 1;
     }
 
+    //Allocated by readline
     free(buff);
     buff = NULL;
 
@@ -83,8 +84,7 @@ int receive_result(int sock)
                 cout << endl;
             return 0;
         }
-    }
-    
+    }   
     
     return 1;
 }
@@ -106,7 +106,6 @@ int main()
         return -1;
     }
 
-    //sock is not modified anymore
     while (!quit)
     {
         if ((buff = read_command()) == NULL) {
@@ -130,6 +129,7 @@ int main()
             return -1;
         }
     }
+
     fclose(fp);
     close(sock);
 

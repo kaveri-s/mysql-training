@@ -14,10 +14,3 @@
 
 bool quit;
 
-enum Entry
-{
-    START,
-    COMMAND,
-    HELP
-};
-
