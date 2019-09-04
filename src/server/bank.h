@@ -29,13 +29,10 @@ private:
 
 public:
     Account(int acc_no, char *name)
+        :acc_no(acc_no), balance(0.0), front(-1), txn_count(0)
     {
-        this->acc_no = acc_no;
         this->name = std::string(name);
         free(name);
-        this->balance = 0.0;
-        this->front = -1;
-        this->txn_count = 0;
         pthread_rwlock_init(&a_info, NULL);
     }
 
@@ -62,9 +59,8 @@ private:
     static Bank *b_manager;
 
     Bank()
+        :bbal(0.0), a_counter(100)
     {
-        bbal = 0.0;
-        a_counter = 100;
         pthread_mutex_init(&b_info, NULL);
         pthread_rwlock_init(&b_map, NULL);
     }

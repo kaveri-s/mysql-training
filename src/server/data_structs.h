@@ -44,9 +44,7 @@ private:
 
 public:
     Compiler()
-    {
-        this->command = NULL;
-    }
+        : command(NULL) {}
 
     //Main parser functions
     struct parseCommand *getParams(const char *);
@@ -55,8 +53,10 @@ public:
     void setBuffer(char *buff, int bufflen)
     {
         std::ostringstream os;
+
         os << buff << std::endl;
         this->buffer = os.str();
+
         return;
     }
 
@@ -81,13 +81,9 @@ public:
     std::string result;
 
     Thread(conn c_sock)
+        : t_id(0), t_state(READY), shutdown(false), c_sock(c_sock), result("Server Error")
     {
-        t_id = 0;
-        t_state = READY;
-        shutdown = false;
         compiler = new Compiler();
-        this->c_sock = c_sock;
-        this->result = "Server Error.";
     }
 
     ~Thread()
@@ -144,10 +140,10 @@ private:
     pthread_mutex_t conn_info;
 
     ConnectionManager()
+        : sock(0), shutdown(false)
     {
         pthread_mutex_init(&map_info, NULL);
         pthread_mutex_init(&conn_info, NULL);
-        shutdown = false;
     }
 
 public:
