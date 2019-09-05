@@ -65,31 +65,36 @@ int ConnectionManager::addToActive(conn c_sock, in_addr ip)
 int ConnectionManager::serveClient(conn c_sock)
 {
 
-    Thread *thd = new Thread(c_sock);
-    if (thd != NULL)
-    {
-        pthread_create(&thd->t_id, NULL, &Thread::pthread_wrapper, thd);
-    }
-
-    this->cleanup(thd);
-
+    Thread *thd = new Thread(pthread_self(), c_sock);
+    addThread(pthread_self());
+    thd->start_thd();
+    delete thd;
+    removeFromActive(c_sock);
+    pthread_exit(NULL);
     return 0;
 }
 
+void ConnectionManager::addThread(pthread_t tid)
+{
+    pthread_mutex_lock(&t_list);
+    Threads.push_back(tid);
+    pthread_mutex_unlock(&t_list);
+}
+
 //Free up thread memory
-int ConnectionManager::cleanup(Thread *thd)
+int ConnectionManager::cleanup()
 {
 
-    if (pthread_join(thd->get_t_id(), NULL))
-    {
-        std::cout << std::strerror(errno) << std::endl;
-        return 1;
+    pthread_mutex_lock(&map_info);
+    int* ids = Threads.data(); 
+    for (int i = 0; i < Threads.size(); ++i) {
+        pthread_join(ids[i], NULL);
     }
+    
+    ActiveConn.clear();
+    pthread_mutex_unlock(&map_info);
 
-    removeFromActive(thd->getConnInfo());
-    close(thd->getConnInfo());
-    delete thd;
-
+    closeConn();
     return 0;
 }
 
@@ -123,14 +128,11 @@ std::string ConnectionManager::printActive()
 //Close All Connections
 void ConnectionManager::closeAllConn()
 {
-
-    pthread_mutex_lock(&map_info);
     std::map<conn, in_addr>::iterator itr;
     for (itr = ActiveConn.begin(); itr != ActiveConn.end(); ++itr)
     {
         close(itr->first);
     }
-    pthread_mutex_unlock(&map_info);
 }
 
 //Close Server connection

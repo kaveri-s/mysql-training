@@ -36,13 +36,18 @@ int main(int argc, char const *argv[])
 
         std::cout << "Client Accepted" << std::endl;
 
-        if(ConnMgr->serveClient(c_sock)) {
+        //Temporary
+        pthread_t threadid;
+
+        if(pthread_create(&threadid, NULL, &ConnectionManager::pthread_wrapper, (void *)&c_sock)) {
             std::cout << std::strerror(errno) << std::endl;
             return EXIT_FAILURE;
         }
 
         std::cout << "Client Served" << std::endl;
     }
+
+    ConnMgr->cleanup();
 
     return 0;
 }

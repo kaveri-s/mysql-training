@@ -11,9 +11,11 @@
 #include <map>
 #include <pthread.h>
 #include <csignal>
+#include <vector>
 
 #define PORT 8080      //Must be same as client
 #define BUFF_SIZE 1024 //Must be same as client
+#define MAX_CLIENTS 1000
 
 #include "bank.h"
 #include "parse_struct.h"
@@ -80,8 +82,8 @@ public:
     Compiler *compiler;
     std::string result;
 
-    Thread(conn c_sock)
-        : t_id(0), t_state(READY), shutdown(false), c_sock(c_sock), result("Server Error")
+    Thread(pthread_t t_id, conn c_sock)
+        : t_id(t_id), t_state(READY), shutdown(false), c_sock(c_sock), result("Server Error")
     {
         compiler = new Compiler();
     }
@@ -96,11 +98,7 @@ public:
     int exec_cmd();
     int send_cmd();
 
-    static void *pthread_wrapper(void *object)
-    {
-        reinterpret_cast<Thread *>(object)->start_thd();
-        return 0;
-    }
+
 
     //Getters and Setters
     void set_t_state(enum t_states t_state)
@@ -138,12 +136,15 @@ private:
     conn sock;
     struct sockaddr_in addr;
     pthread_mutex_t conn_info;
+    std::vector<int> Threads;
+    pthread_mutex_t t_list;
 
     ConnectionManager()
         : sock(0), shutdown(false)
     {
         pthread_mutex_init(&map_info, NULL);
         pthread_mutex_init(&conn_info, NULL);
+        pthread_mutex_init(&t_list, NULL);
     }
 
 public:
@@ -152,6 +153,13 @@ public:
     {
         static ConnectionManager instance;
         return &instance;
+    }
+
+    static void *pthread_wrapper(void *c_sock)
+    {
+        ConnectionManager *ConnMgr = ConnectionManager::getInstance();
+        ConnMgr->serveClient(*(int *)c_sock);
+        return 0;
     }
 
     //Public Data Members
@@ -164,9 +172,10 @@ public:
     conn getNewConnection(struct sockaddr_in *client_addr, socklen_t *len);
     int addToActive(conn, in_addr);
     std::string printActive();
+    void addThread(pthread_t);
     int removeFromActive(conn c_sock);
     int serveClient(conn);
-    int cleanup(Thread *);
+    int cleanup();
     int getConnCount();
     void closeAllConn();        //Only to be used by Signal Handler
     void closeConn();
