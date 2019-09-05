@@ -8,7 +8,7 @@ int init_conn(int *sock, struct sockaddr_in addr)
 
     if ((*sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        std::cout << "Socket Error: " << std::strerror(errno) << std::endl;
+        std::cout << "Socket Setup Error" << std::endl;
         return 1;
     }
 
@@ -18,7 +18,7 @@ int init_conn(int *sock, struct sockaddr_in addr)
 
     if (connect(*sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
-        std::cout << "Connection Error: " << std::strerror(errno) << std::endl;
+        std::cout << "Connection Error" << std::endl;
         return 1;
     }
 
@@ -50,7 +50,7 @@ int send_command(int sock, char * buff)
     {
         close(sock);
         free(buff);
-        std::cout << "Send Error: " << std::strerror(errno) << std::endl;
+        std::cout << "Send Error" << std::endl;
         return 1;
     }
 

@@ -24,16 +24,6 @@
 
 typedef int conn;
 
-enum t_states
-{
-    READY,
-    RECEIVING,
-    PARSING,
-    EXECUTING,
-    SENDING,
-    DONE
-};
-
 int yyparse(struct parseCommand *expression, yyscan_t scanner);
 
 //Compiler
@@ -52,6 +42,8 @@ public:
     struct parseCommand *getParams(const char *);
     int parse();
 
+
+    //Getters and Setters
     void setBuffer(char *buff, int bufflen)
     {
         std::ostringstream os;
@@ -73,9 +65,8 @@ class Thread
 
 private:
 
-    enum t_states t_state;
     conn c_sock;
-    bool shutdown;
+    bool stopthread;
 
 public:
     pthread_t t_id;
@@ -83,7 +74,7 @@ public:
     std::string result;
 
     Thread(pthread_t t_id, conn c_sock)
-        : t_id(t_id), t_state(READY), shutdown(false), c_sock(c_sock), result("Server Error")
+        : t_id(t_id), stopthread(false), c_sock(c_sock), result("Server Error")
     {
         compiler = new Compiler();
     }
@@ -93,38 +84,11 @@ public:
         delete compiler;
     }
 
-    void *start_thd();
+    void start_thd();
     int rcv_cmd();
     int exec_cmd();
     int send_cmd();
 
-
-
-    //Getters and Setters
-    void set_t_state(enum t_states t_state)
-    {
-        this->t_state = t_state;
-    }
-
-    enum t_states get_t_state()
-    {
-        return this->t_state;
-    }
-
-    void set_t_id(int t_id)
-    {
-        this->t_id = t_id;
-    }
-
-    pthread_t get_t_id()
-    {
-        return this->t_id;
-    }
-
-    conn getConnInfo()
-    {
-        return c_sock;
-    }
 };
 
 //Holds Metadata regarding active connections
@@ -135,16 +99,12 @@ private:
 
     conn sock;
     struct sockaddr_in addr;
-    pthread_mutex_t conn_info;
-    std::vector<int> Threads;
-    pthread_mutex_t t_list;
 
     ConnectionManager()
-        : sock(0), shutdown(false)
+        : sock(0), stopserver(false)
     {
         pthread_mutex_init(&map_info, NULL);
         pthread_mutex_init(&conn_info, NULL);
-        pthread_mutex_init(&t_list, NULL);
     }
 
 public:
@@ -155,30 +115,30 @@ public:
         return &instance;
     }
 
-    static void *pthread_wrapper(void *c_sock)
+    static void *pthread_wrapper(void *arg)
     {
         ConnectionManager *ConnMgr = ConnectionManager::getInstance();
-        ConnMgr->serveClient(*(int *)c_sock);
+        ConnMgr->serveClient(*(int *)arg);
         return 0;
     }
 
     //Public Data Members
     std::map<conn, in_addr> ActiveConn;
     pthread_mutex_t map_info;
-    bool shutdown;
+
+    pthread_mutex_t conn_info;      //For closing socket accepting clients
+
+    bool stopserver;
 
     //Public Member Functions
     int initConn();
     conn getNewConnection(struct sockaddr_in *client_addr, socklen_t *len);
-    int addToActive(conn, in_addr);
+    void addToActive(conn, in_addr);
     std::string printActive();
-    void addThread(pthread_t);
-    int removeFromActive(conn c_sock);
+    void removeFromActive(conn c_sock);
     int serveClient(conn);
-    int cleanup();
-    int getConnCount();
-    void closeAllConn();        //Only to be used by Signal Handler
-    void closeConn();
+    void closeAllConn();
+    void closeConn();       //Make sure no thread accesses this. Thread safe anyways
 
 };
 

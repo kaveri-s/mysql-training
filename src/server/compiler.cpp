@@ -38,9 +38,9 @@ int Compiler::parse()
     char buff[this->buffer.size() + 1];
     strncpy(buff, this->buffer.c_str(), this->buffer.size());
     buff[this->buffer.size()]='\0';
-    this->command = this->getParams((const char *)buff);
+    command = getParams((const char *)buff);
     
-    if (this->command == NULL)
+    if (command == NULL)
     {
         return 1;
     }

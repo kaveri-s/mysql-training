@@ -4,30 +4,30 @@
 int ConnectionManager::initConn()
 {
 
-    if ((this->sock = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
-        std::cout << std::strerror(errno) << std::endl;
+        std::cout << "Socket Creation Error" << std::endl;
         return 1;
     }
     std::cout << "Server Socket Created" << std::endl;
 
     int optval = 1;
-    setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 
-    this->addr.sin_family = AF_INET;
-    this->addr.sin_addr.s_addr = INADDR_ANY;
-    this->addr.sin_port = htons(PORT);
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(PORT);
 
-    if (bind(this->sock, (struct sockaddr *)&this->addr, sizeof(sockaddr_in)) < 0)
+    if (bind(sock, (struct sockaddr *)&addr, sizeof(sockaddr_in)) < 0)
     {
-        std::cout << std::strerror(errno) << std::endl;
+        std::cout << "Socket Bind Error" << std::endl;
         return 1;
     }
     std::cout << "Bound" << std::endl;
 
-    if (listen(this->sock, 3) < 0)
+    if (listen(sock, 3) < 0)
     {
-        std::cout << std::strerror(errno) << std::endl;
+        std::cout << "Can't listen!" << std::endl;
         return 1;
     }
     std::cout << "Listening..." << std::endl;
@@ -40,72 +40,70 @@ conn ConnectionManager::getNewConnection(struct sockaddr_in *client_addr, sockle
 {
 
     conn c_sock;
-
-    if ((c_sock = accept(this->sock, (struct sockaddr *)client_addr, len)) < 0)
+    if ((c_sock = accept(sock, (struct sockaddr *)client_addr, len)) < 0)
     {
-        std::cout << std::strerror(errno) << std::endl;
+        if(stopserver) {
+            closeConn();
+            exit(0);
+        }
+
+        std::cout << "Client Accept Error" << std::endl;
         return 0;
     }
 
-    this->addToActive(c_sock, client_addr->sin_addr);
+    addToActive(c_sock, client_addr->sin_addr);
 
     return c_sock;
-}
-
-//Add Connection to Active Connections
-int ConnectionManager::addToActive(conn c_sock, in_addr ip)
-{
-    pthread_mutex_lock(&map_info);
-    ActiveConn.insert(std::pair<conn, in_addr>(c_sock, ip));
-    pthread_mutex_unlock(&map_info);
-    return 0;
 }
 
 //Serve new client on new socket
 int ConnectionManager::serveClient(conn c_sock)
 {
 
-    Thread *thd = new Thread(pthread_self(), c_sock);
-    addThread(pthread_self());
-    thd->start_thd();
-    delete thd;
-    removeFromActive(c_sock);
-    pthread_exit(NULL);
-    return 0;
-}
-
-void ConnectionManager::addThread(pthread_t tid)
-{
-    pthread_mutex_lock(&t_list);
-    Threads.push_back(tid);
-    pthread_mutex_unlock(&t_list);
-}
-
-//Free up thread memory
-int ConnectionManager::cleanup()
-{
-
-    pthread_mutex_lock(&map_info);
-    int* ids = Threads.data(); 
-    for (int i = 0; i < Threads.size(); ++i) {
-        pthread_join(ids[i], NULL);
+    if(pthread_detach(pthread_self())) {
+        std::cout << "Unable to detach thread" << std::endl;
+        return 1;
     }
-    
-    ActiveConn.clear();
-    pthread_mutex_unlock(&map_info);
 
-    closeConn();
+    Thread *thd = new Thread(pthread_self(), c_sock);
+
+    thd->start_thd();
+
+    removeFromActive(c_sock);
+
+    if(close(c_sock)) {
+        std::cout << "Client socket close error" << std::endl;
+        return 1;
+    }
+
+    delete thd;
+
+    if (stopserver)
+    {
+        closeAllConn();
+        shutdown(sock, SHUT_RD);
+    }
+
+    pthread_exit(NULL);
+
     return 0;
+}
+
+//Add Connection to Active Connections
+void ConnectionManager::addToActive(conn c_sock, in_addr ip)
+{
+    pthread_mutex_lock(&map_info);
+    ActiveConn.insert(std::pair<conn, in_addr>(c_sock, ip));
+    pthread_mutex_unlock(&map_info);
 }
 
 //Remove Connection from List
-int ConnectionManager::removeFromActive(conn c_sock)
+void ConnectionManager::removeFromActive(conn c_sock)
 {
 
     pthread_mutex_lock(&map_info);
     ActiveConn.erase(c_sock);
     pthread_mutex_unlock(&map_info);
-    return 0;
 }
 
 //Get Active Connections
@@ -129,16 +127,23 @@ std::string ConnectionManager::printActive()
 void ConnectionManager::closeAllConn()
 {
     std::map<conn, in_addr>::iterator itr;
-    for (itr = ActiveConn.begin(); itr != ActiveConn.end(); ++itr)
+    pthread_mutex_lock(&map_info);
+    std::cout << "Closing all connections" << std::endl;
+    if (!ActiveConn.empty())
     {
-        close(itr->first);
+        for (itr = ActiveConn.begin(); itr != ActiveConn.end(); ++itr)
+        {
+            std::cout << itr->first << std::endl;
+            close(itr->first);
+        }
     }
+    pthread_mutex_unlock(&map_info);
 }
 
-//Close Server connection
-void ConnectionManager::closeConn()
-{
+//Close client acceptor socket
+void ConnectionManager::closeConn() {
+    std::cout << "Shutting Down Server";
     pthread_mutex_lock(&conn_info);
-    close(this->sock);
+    close(sock);
     pthread_mutex_unlock(&conn_info);
 }

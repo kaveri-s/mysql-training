@@ -8,11 +8,11 @@ CONFIGURATION
 """
 PATH_TO_CLIENT = '/home/kaveri/Desktop/mysql-training/src/client/client'
 PROMPT = 'Lorem >>'
-END_OF_OUTPUT = '\n\n'
+END_OF_OUTPUT = '\n'
 STATUS_LINES_BEFORE_PROMPT = 0
-ACC_NO_REGEX = re.compile(r'Account number is ([\d]+)')
+ACC_NO_REGEX = re.compile(r'Account Opened ([\d]+)')
 get_acc_no = lambda s : int(ACC_NO_REGEX.search(s).group(1))
-AMOUNT_REGEX = re.compile(r'Account balance is \$(([0-9]*\.)?[0-9]+)')
+AMOUNT_REGEX = re.compile(r'New Balance: (([0-9]*\.)?[0-9]+)')
 get_amount = lambda s : float(AMOUNT_REGEX.search(s).group(1))
 """
 END OF CONFIGURATION
@@ -45,7 +45,7 @@ def send_command(input_string):
     return output_string.lstrip(PROMPT).replace(END_OF_OUTPUT,'')
 
 def open_account():
-    s = send_command("open account {} {}".format(randomString(),randomString()))
+    s = send_command("OPEN ACCOUNT {}".format(randomString(),randomString()))
     return get_acc_no(s)
     
 # for i in range(10000):
@@ -59,22 +59,22 @@ for i in range(100):
     acc_no = open_account()
     for j in range(1000):
         print("{}:{}".format(i,j))
-        send_command("show account balance {}".format(acc_no))
+        send_command("SHOW ACCOUNT BALANCE {}".format(acc_no))
 
         amount = round(random.uniform(500,1000),0)
-        s = send_command("deposit {} {}".format(acc_no, amount))
+        s = send_command("DEPOSIT {} {}".format(acc_no, amount))
         balance += amount
         assert(get_amount(s)==balance)
 
-        send_command("show account balance {}".format(acc_no))
+        send_command("SHOW ACCOUNT BALANCE {}".format(acc_no))
 
         amount = amount - 1.0
-        s = send_command("withdraw {} {}".format(acc_no, amount))
+        s = send_command("WITHDRAW {} {}".format(acc_no, amount))
         balance -= amount
         assert(get_amount(s)==balance)
 
-        send_command("show account balance {}".format(acc_no))
+        send_command("SHOW ACCOUNT BALANCE {}".format(acc_no))
 
-    send_command("show mini statement {}".format(acc_no))
-    send_command("show bank balance")    
-    send_command("show all accounts")
+    send_command("SHOW MINI STATEMENT {}".format(acc_no))
+    send_command("SHOW BANK BALANCE")    
+    send_command("SHOW ALL ACCOUNTS")
