@@ -15,7 +15,6 @@
 
 #define PORT 8080      //Must be same as client
 #define BUFF_SIZE 1024 //Must be same as client
-#define MAX_CLIENTS 1000
 
 #include "bank.h"
 #include "parse_struct.h"
