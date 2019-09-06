@@ -2,7 +2,14 @@
 
 This client-server applicaton was created as part of a practice test
 
-## Installation
+## Dependecies
+This code requires:
+* readline C library
+* make
+* valgrind
+* python3
+
+## Folder Structure
 
 The folder structure is as follows
 
