@@ -73,6 +73,7 @@ int ConnectionManager::serveClient(conn c_sock)
 
     if(close(c_sock)) {
         std::cout << "Client socket close error" << std::endl;
+        delete thd;
         return 1;
     }
 
