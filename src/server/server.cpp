@@ -3,8 +3,8 @@
 //Signal Handler
 void signal_handler( int signal_num ){
     ConnectionManager *ConnMgr = ConnectionManager::getInstance();
-    ConnMgr->closeAllConn();
-    ConnMgr->closeConn();
+    ConnMgr->closeCliConns();
+    ConnMgr->closeSrvConn();
     exit(1);
 }
 

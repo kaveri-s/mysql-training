@@ -122,7 +122,7 @@ public:
     }
 
     //Public Data Members
-    std::map<conn, in_addr> ActiveConn;
+    std::map<conn, sockaddr_in> ActiveConn;
     pthread_mutex_t map_info;
 
     pthread_mutex_t conn_info;      //For closing socket accepting clients
@@ -132,12 +132,12 @@ public:
     //Public Member Functions
     int initConn();
     conn getNewConnection(struct sockaddr_in *client_addr, socklen_t *len);
-    void addToActive(conn, in_addr);
+    void addToActive(conn, sockaddr_in);
     std::string printActive();
     void removeFromActive(conn c_sock);
     int serveClient(conn);
-    void closeAllConn();
-    void closeConn();       //Make sure no thread accesses this. Thread safe anyways
+    void closeCliConns();
+    void closeSrvConn();       //Make sure no thread accesses this. Thread safe anyways
 
 };
 

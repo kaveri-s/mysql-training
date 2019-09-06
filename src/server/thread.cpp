@@ -87,14 +87,10 @@ int Thread::exec_cmd()
             result = "Account Not Found\n";
             break;
         }
-        if((bal = acc->showAccountBalance()))
-        {
-            os << std::fixed << std::setprecision(2) << bal << std::endl;
-            result = os.str();
-        }
-        else {
-            result = "Account Balance Error\n";
-        }
+
+        bal = acc->showAccountBalance();
+        os << std::fixed << std::setprecision(2) << bal << std::endl;
+        result = os.str();
         break;
 
     case CR:

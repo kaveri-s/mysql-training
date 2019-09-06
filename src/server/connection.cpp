@@ -43,7 +43,7 @@ conn ConnectionManager::getNewConnection(struct sockaddr_in *client_addr, sockle
     if ((c_sock = accept(sock, (struct sockaddr *)client_addr, len)) < 0)
     {
         if(stopserver) {
-            closeConn();
+            closeSrvConn();
             exit(0);
         }
 
@@ -51,7 +51,7 @@ conn ConnectionManager::getNewConnection(struct sockaddr_in *client_addr, sockle
         return 0;
     }
 
-    addToActive(c_sock, client_addr->sin_addr);
+    addToActive(c_sock, (sockaddr_in)*client_addr);
 
     return c_sock;
 }
@@ -80,7 +80,7 @@ int ConnectionManager::serveClient(conn c_sock)
 
     if (stopserver)
     {
-        closeAllConn();
+        closeCliConns();
         shutdown(sock, SHUT_RD);
     }
 
@@ -90,10 +90,10 @@ int ConnectionManager::serveClient(conn c_sock)
 }
 
 //Add Connection to Active Connections
-void ConnectionManager::addToActive(conn c_sock, in_addr ip)
+void ConnectionManager::addToActive(conn c_sock, sockaddr_in addr)
 {
     pthread_mutex_lock(&map_info);
-    ActiveConn.insert(std::pair<conn, in_addr>(c_sock, ip));
+    ActiveConn.insert(std::pair<conn, sockaddr_in>(c_sock, addr));
     pthread_mutex_unlock(&map_info);
 }
 
@@ -113,10 +113,10 @@ std::string ConnectionManager::printActive()
     std::ostringstream os;
 
     pthread_mutex_lock(&map_info);
-    std::map<conn, in_addr>::iterator itr;
+    std::map<conn, sockaddr_in>::iterator itr;
     for (itr = ActiveConn.begin(); itr != ActiveConn.end(); ++itr)
     {
-        os << inet_ntoa(itr->second) << '\n';
+        os << inet_ntoa(itr->second.sin_addr) << "\t" << ntohs(itr->second.sin_port) << '\n';
     }
     pthread_mutex_unlock(&map_info);
 
@@ -124,9 +124,9 @@ std::string ConnectionManager::printActive()
 }
 
 //Close All Connections
-void ConnectionManager::closeAllConn()
+void ConnectionManager::closeCliConns()
 {
-    std::map<conn, in_addr>::iterator itr;
+    std::map<conn, sockaddr_in>::iterator itr;
     pthread_mutex_lock(&map_info);
     std::cout << "Closing all connections" << std::endl;
     if (!ActiveConn.empty())
@@ -141,8 +141,8 @@ void ConnectionManager::closeAllConn()
 }
 
 //Close client acceptor socket
-void ConnectionManager::closeConn() {
-    std::cout << "Shutting Down Server";
+void ConnectionManager::closeSrvConn() {
+    std::cout << "Shutting Down Server" << std::endl;
     pthread_mutex_lock(&conn_info);
     close(sock);
     pthread_mutex_unlock(&conn_info);
