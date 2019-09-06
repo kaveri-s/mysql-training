@@ -96,8 +96,6 @@ int main()
     struct sockaddr_in addr;
     char *buff;
 
-    FILE *fp = fopen("test.txt","r");
-
     quit = false;
 
     //Call by reference needed as sock is being assigned here
@@ -130,7 +128,6 @@ int main()
         }
     }
 
-    fclose(fp);
     close(sock);
 
     return 0;
