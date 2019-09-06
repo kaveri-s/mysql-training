@@ -55,7 +55,7 @@ There are 6 .cpp files:
 * bank.cpp : definitions of member functions of Bank class
 * account.cpp : definitions of member functions of Account class
 
-##Setup
+## Setup
 To run the server, in the src/server folder run:
 ```bash
 make
